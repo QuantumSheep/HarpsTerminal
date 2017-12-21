@@ -27,7 +27,7 @@ const commands = {
         "doc": "Say something to the others",
         "action": (parameters, socket, io) => {
             let message = ``;
-            
+
             parameters.forEach((param) => {
                 message += `${param} `;
             });
@@ -39,19 +39,50 @@ const commands = {
         "doc": "",
         "action": (parameters, socket, io) => {
             let message = ``;
-            
+
             parameters.forEach((param) => {
                 message += `${param} `;
             });
 
             io.emit('terminal command', ` _________________\n` +
-            `< ${message} >\n` +
-            ` -----------------\n` +
-            `          \\   ^__^\n` +
-            `           \\  (♥♥)\\_______\n` +
-            `              (__)\\                )\\/\\\n` +
-            `                  ||---------w   |\n` +
-            `                  ||                 ||\n`);
+                `< ${message} >\n` +
+                ` -----------------\n` +
+                `          \\   ^__^\n` +
+                `           \\  (♥♥)\\_______\n` +
+                `              (__)\\                )\\/\\\n` +
+                `                  ||---------w   |\n` +
+                `                  ||                 ||\n`);
+        }
+    },
+    "calc": {
+        "doc": "",
+        "action": (parameters, socket, io) => {
+            let calc = parameters[0];
+            for (let i = 1; i < parameters.length; i++) {
+                if (parameters[i + 1] && parameters[i]) {
+                    switch(parameters[i]) {
+                        case "+":
+                            calc += parseInt(parameters[i + 1]);
+                            break;
+                        case "-":
+                            calc -= parseInt(parameters[i + 1]);
+                            break;
+                        case "*":
+                            calc *= parseInt(parameters[i + 1]);
+                            break;
+                        case "/":
+                            calc /= parseInt(parameters[i + 1]);
+                            break;
+                        case "^":
+                            calc = Math.pow(calc, parseInt(parameters[i + 1]));
+                            break;
+                    }
+                }
+
+                i++;
+            }
+
+            socket.emit('terminal command', (calc != null && calc != "" ? calc : 0));
         }
     }
 };
@@ -62,7 +93,7 @@ function emitCmd(socket, cmd) {
 
 io.on('connection', (socket) => {
     socket.on('terminal command', (cmd) => {
-        if(cmd.length > 0) {
+        if (cmd.length > 0) {
             let parameters = cmd.split(' ');
             let userCommand = parameters.shift();
 
