@@ -6,20 +6,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My web terminal</title>
 
-    <link rel="stylesheet" href="terminal.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/css/terminal.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="terminal" id="terminal1">
         <div class="terminal-display">
-
+            <div class="terminal-moment"></div>
+            <div class="terminal-messages"></div>
         </div>
         <div class="terminal-input">
             <input autocomplete="off" type="text">
         </div>
     </div>
 
-    <script src="terminal.js"></script>
-    <script src="script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/terminal.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>
