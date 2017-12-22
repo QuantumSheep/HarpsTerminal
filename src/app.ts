@@ -27,9 +27,11 @@ terminal.commands = {
 
             if(parameters[0]) {
                 if(terminal.commands[parameters[0]].usage) {
-                    answer += `${terminal.commands[parameters[0]].usage}`;
+                    terminal.commands[parameters[0]].usage.forEach((usage) => {
+                        answer += `${usage}<br>`;
+                    });
                     
-                    socket.emit('terminal command', `Usage of '${parameters[0]}' : <br>${answer}<br>`);
+                    socket.emit('terminal command', `Usage${(terminal.commands[parameters[0]].usage.length > 1 ? 's' : '')} of '${parameters[0]}' : <br>${answer}`);
                 } else {
                     socket.emit('terminal command', `Sorry, there is no usage documented for this command '${parameters[0]}'`);
                 }
@@ -75,34 +77,18 @@ terminal.commands = {
     },
     "calc": {
         "doc": "Calculate some numbers",
-        "usage": "calc [n1][[+|-|*|/|^][n2]...]",
+        "usage": [
+            "calc [n1] [+|-|*|/|^] [n2]",
+            "calc [n1] [[+|-|*|/|^] [n2]...]"
+        ],
         "action": (parameters, socket, io, fullparams, fullcmd) => {
-            let calc: number = parseInt(parameters[0]);
-            for (let i = 1; i < parameters.length; i++) {
-                if (parameters[i + 1] && parameters[i]) {
-                    switch(parameters[i]) {
-                        case "+":
-                            calc += parseInt(parameters[i + 1]);
-                            break;
-                        case "-":
-                            calc -= parseInt(parameters[i + 1]);
-                            break;
-                        case "*":
-                            calc *= parseInt(parameters[i + 1]);
-                            break;
-                        case "/":
-                            calc /= parseInt(parameters[i + 1]);
-                            break;
-                        case "^":
-                            calc = Math.pow(calc, parseInt(parameters[i + 1]));
-                            break;
-                    }
-                }
-
-                i++;
+            let calc: string = parameters.join('');
+            
+            if (new RegExp(/^[0-9\/\(\)\~\*\<\>&\-\+\|\^\% ]+$/, 'i').test(calc)) {
+                socket.emit('terminal command', eval(calc));
+            } else {
+                socket.emit('terminal command', `Syntaxe incorrecte '${fullcmd}'`);
             }
-
-            socket.emit('terminal command', (calc != null ? calc : `Syntaxe incorrecte '${fullcmd}'`));
         }
     }
 };

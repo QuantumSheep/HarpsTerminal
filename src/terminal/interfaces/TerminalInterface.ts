@@ -1,6 +1,6 @@
 export interface TerminalCommand {
     doc?: string;
-    usage?: string;
+    usage?: string[];
     action: (parameters: string[], socket: SocketIO.Socket, io: SocketIO.Server, fullparams: string, fullcmd: string) => void;
 }
 
