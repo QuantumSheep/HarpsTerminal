@@ -26,8 +26,6 @@ export interface TerminalConfig {
     messages: {
         prefix?: string;
         suffix?: string;
-
-        color?: string;
     }
 
     errors: {

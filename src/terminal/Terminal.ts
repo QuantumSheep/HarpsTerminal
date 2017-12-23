@@ -1,6 +1,5 @@
 import { TerminalConfig, TerminalCommands, TerminalError, TerminalException } from './interfaces/TerminalInterface';
 import * as uuidv4 from 'uuid/v4';
-import * as moment from 'moment';
 
 export default class Terminal {
     readonly id: string;
@@ -14,8 +13,6 @@ export default class Terminal {
     messages: {
         prefix?: string;
         suffix?: string;
-
-        color?: string;
     }
 
     errors: {
@@ -60,7 +57,6 @@ export default class Terminal {
 
         this.messages.prefix = config.messages.prefix ? config.messages.prefix : "";
         this.messages.suffix = config.messages.suffix ? config.messages.suffix : "";
-        this.messages.color = config.messages.color ? config.messages.color : "";
 
         this.errors = config.errors ? config.errors : {};
 
@@ -97,8 +93,7 @@ export default class Terminal {
                 if (this.commands && this.commands[userCommand]) {
                     this.commands[userCommand].action(parameters, this.socket, this.io, fullparams, fullcmd);
                 } else {
-                    this.emit(cmd);
-                    this.socket.emit(this.socketEvent, `Sorry but this command doesn't exists '${cmd}'`);
+                    this.emit(`${this.errors.cmdNoUsage.usePrefix ? this.messages.prefix : ''}${this.errors.cmdNoUsage.message} '${cmd}'${this.errors.cmdNoUsage.useSuffix ? this.messages.suffix : ''}`);
                 }
             }
         } else {
@@ -107,6 +102,6 @@ export default class Terminal {
     }
 
     emit(message: string): void {
-        this.socket.emit(this.socketEvent, `${this.messages.prefix}${message}${this.messages.suffix}`);
+        this.socket.emit(this.socketEvent, `${message}`);
     }
 }

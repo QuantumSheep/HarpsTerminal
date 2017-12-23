@@ -6,6 +6,7 @@ import * as socketio from 'socket.io';
 import * as path from 'path';
 import Terminal from './terminal/Terminal';
 import { TerminalCommand, TerminalConfig } from './terminal/interfaces/TerminalInterface';
+import* as moment from 'moment';
 
 const app: Express = express(),
     http: Server = new httpserv.Server(app),
@@ -19,6 +20,15 @@ app.get('/', (req, res, next) => {
 
 let terminal: Terminal = new Terminal();
 
+terminal.messages.prefix = `$root `;
+terminal.errors = {
+    cmdNoUsage: {
+        message: "There is no usages listed for this command"
+    },
+    cmdNotExists: {
+        message: "Sorry but this command doesn't exists"
+    }
+}
 terminal.commands = {
     "help": {
         doc: "Get a list of all availables commands you can do",
@@ -84,7 +94,7 @@ terminal.commands = {
             if (RegExp(/^[0-9\/\(\)\~\*\<\>&\-\+\|\^\% ]+$/, 'i').test(fullparams)) {
                 socket.emit('terminal command', eval(fullparams));
             } else {
-                socket.emit('terminal command', `Syntaxe incorrecte '${fullcmd}'`);
+                socket.emit('terminal command', `Incorrect syntax '${fullcmd}'`);
             }
         }
     }
