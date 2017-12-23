@@ -25,15 +25,15 @@ terminal.commands = {
         action: (parameters, socket, io) => {
             let answer: string = "";
 
-            if(parameters[0]) {
-                if(terminal.commands[parameters[0]].usage) {
+            if (parameters[0]) {
+                if (terminal.commands[parameters[0]].usage) {
                     terminal.commands[parameters[0]].usage.forEach((usage) => {
                         answer += `${usage}<br>`;
                     });
-                    
+
                     socket.emit('terminal command', `Usage${(terminal.commands[parameters[0]].usage.length > 1 ? 's' : '')} of '${parameters[0]}' : <br>${answer}`);
                 } else {
-                    socket.emit('terminal command', `Sorry, there is no usage documented for this command '${parameters[0]}'`);
+                    socket.emit('terminal command', `Sorry, there is no usage documented for this command '${parameters[0]}'<br>`);
                 }
             } else {
                 Object.keys(terminal.commands).forEach((index) => {
@@ -45,8 +45,8 @@ terminal.commands = {
         }
     },
     "say": {
-        "doc": "Say something to the others",
-        "action": (parameters, socket, io, fullparams, fullcmd) => {
+        doc: "Say something to the others",
+        action: (parameters, socket, io) => {
             let message = ``;
 
             parameters.forEach((param) => {
@@ -57,8 +57,8 @@ terminal.commands = {
         }
     },
     "cowsay": {
-        "doc": "Tell what the cow say",
-        "action": (parameters, socket, io, fullparams, fullcmd) => {
+        doc: "Tell what the cow say",
+        action: (parameters, socket, io) => {
             let message = ``;
 
             parameters.forEach((param) => {
@@ -76,16 +76,13 @@ terminal.commands = {
         }
     },
     "calc": {
-        "doc": "Calculate some numbers",
-        "usage": [
-            "calc [n1] [+|-|*|/|^] [n2]",
-            "calc [n1] [[+|-|*|/|^] [n2]...]"
+        doc: "Calculate some numbers",
+        usage: [
+            "calc [any basic mathematic expression]"
         ],
-        "action": (parameters, socket, io, fullparams, fullcmd) => {
-            let calc: string = parameters.join('');
-            
-            if (new RegExp(/^[0-9\/\(\)\~\*\<\>&\-\+\|\^\% ]+$/, 'i').test(calc)) {
-                socket.emit('terminal command', eval(calc));
+        action: (parameters, socket, io, fullparams, fullcmd) => {
+            if (RegExp(/^[0-9\/\(\)\~\*\<\>&\-\+\|\^\% ]+$/, 'i').test(fullparams)) {
+                socket.emit('terminal command', eval(fullparams));
             } else {
                 socket.emit('terminal command', `Syntaxe incorrecte '${fullcmd}'`);
             }
@@ -94,7 +91,7 @@ terminal.commands = {
 };
 
 io.on('connection', (socket) => {
-    terminal.useSocket(socket, io);
+    terminal.useSocket('terminal command', socket, io);
     socket.on('terminal command', (cmd) => {
         terminal.handleCommand(cmd);
     });

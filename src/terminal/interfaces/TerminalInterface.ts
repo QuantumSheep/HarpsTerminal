@@ -8,6 +8,34 @@ export interface TerminalCommands {
     [key: string]: TerminalCommand;
 }
 
+export interface TerminalError {
+    usePrefix?: boolean;
+    useSuffix?: boolean;
+
+    message?: string;
+}
+
 export interface TerminalConfig {
-    commands?: TerminalCommands;
+    commands: TerminalCommands;
+
+    socketEvent?: string | symbol;
+
+    socket?: SocketIO.Socket;
+    io?: SocketIO.Server;
+    
+    messages: {
+        prefix?: string;
+        suffix?: string;
+
+        color?: string;
+    }
+
+    errors: {
+        cmdNotExists?: TerminalError;
+        cmdNoUsage?: TerminalError;
+    }
+}
+
+export interface TerminalException extends Error {
+    
 }
