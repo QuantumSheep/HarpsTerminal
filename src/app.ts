@@ -101,8 +101,8 @@ terminal.commands = {
 };
 
 io.on('connection', (socket) => {
-    terminal.useSocket('terminal command', socket, io);
     socket.on('terminal command', (cmd) => {
+        terminal.useSocket('terminal command', socket, io);
         terminal.handleCommand(cmd);
     });
 });
